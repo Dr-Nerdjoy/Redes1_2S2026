@@ -1,0 +1,38 @@
+enable
+configure terminal
+hostname SW-Z5-A
+no ip domain-lookup
+vtp mode client
+vtp domain 201708993
+vtp password Cayala2026
+spanning-tree mode rapid-pvst
+interface fastEthernet0/1
+ description TRUNK a SW-Z5-P Fa0/2
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 53,99
+ exit
+end
+
+configure terminal
+interface range fastEthernet0/2-4
+ description HOST VLAN 53
+ switchport mode access
+ switchport access vlan 53
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ exit
+interface range fastEthernet0/5-24
+ description PUERTO SIN USO - BLACKHOLE
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+ exit
+interface range gigabitEthernet0/1-2
+ description PUERTO SIN USO - BLACKHOLE
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+ exit
+end
+write memory

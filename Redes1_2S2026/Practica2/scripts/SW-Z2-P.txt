@@ -1,0 +1,108 @@
+enable
+configure terminal
+hostname SW-Z2-P
+no ip domain-lookup
+vtp mode server
+vtp domain 201708993
+vtp password Cayala2026
+spanning-tree mode rapid-pvst
+interface range gigabitEthernet0/1-2
+ description EtherChannel PAgP a SW-Z1-P Gi0/1-2
+ channel-protocol pagp
+ channel-group 1 mode desirable
+ exit
+interface port-channel 1
+ description EtherChannel PAgP (Po1)
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 13,43,99
+ exit
+interface fastEthernet0/1
+ description TRUNK a SW-Z4-P Fa0/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 13,33,43,99
+ exit
+interface fastEthernet0/2
+ description TRUNK a SW-Z3-P Fa0/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 33,99
+ exit
+interface fastEthernet0/3
+ description TRUNK a SW-Z5-P Fa0/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 53,99
+ exit
+interface fastEthernet0/4
+ description TRUNK a SW-Z2-A Fa0/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 23,99
+ exit
+vlan 13
+ name Z1_PASEO_COMERCIAL
+ exit
+vlan 23
+ name Z2_ADMIN_OFICINAS
+ exit
+vlan 33
+ name Z3_MEDICOS_BANCOS
+ exit
+vlan 43
+ name Z4_GASTRO_CINES
+ exit
+vlan 53
+ name Z5_SERV_SECUNDARIOS
+ exit
+vlan 99
+ name NATIVA_ADMIN
+ exit
+vlan 999
+ name BLACKHOLE
+ exit
+ip routing
+end
+
+configure terminal
+spanning-tree vlan 23,99 priority 4096
+spanning-tree vlan 13,33,43,53 priority 8192
+interface vlan 13
+ description Gateway Z1_PASEO_COMERCIAL
+ ip address 192.168.13.1 255.255.255.192
+ no shutdown
+ exit
+interface vlan 23
+ description Gateway Z2_ADMIN_OFICINAS
+ ip address 192.168.23.1 255.255.255.224
+ no shutdown
+ exit
+interface vlan 33
+ description Gateway Z3_MEDICOS_BANCOS
+ ip address 192.168.33.1 255.255.255.240
+ no shutdown
+ exit
+interface vlan 43
+ description Gateway Z4_GASTRO_CINES
+ ip address 192.168.43.1 255.255.255.192
+ no shutdown
+ exit
+interface vlan 53
+ description Gateway Z5_SERV_SECUNDARIOS
+ ip address 192.168.53.1 255.255.255.240
+ no shutdown
+ exit
+interface range fastEthernet0/5-24
+ description PUERTO SIN USO - BLACKHOLE
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+ exit
+end
+write memory
